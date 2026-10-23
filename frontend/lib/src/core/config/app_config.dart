@@ -21,7 +21,7 @@ class AppConfig {
   static const int maxPostMediaBytes = 10 * 1024 * 1024;
 
   /// Storage bucket for post media (images/videos).
-  static const String postMediaBucket = 'post_media';
+  static const String postMediaBucket = 'posts_media';
 
   /// Storage bucket for user profile avatars.
   static const String avatarBucket = 'avatars';
