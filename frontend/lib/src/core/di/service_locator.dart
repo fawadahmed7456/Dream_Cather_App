@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../features/auth/data/repositories/auth_repository.dart';
+import '../../features/social/data/repositories/social_repository.dart';
 import '../services/supabase_service.dart';
 import '../services/supabase_storage_service.dart';
 import '../utils/logger_utils.dart';
@@ -31,6 +32,9 @@ Future<void> setupServiceLocator() async {
   // Feature Repositories
   if (!sl.isRegistered<AuthRepository>()) {
     sl.registerLazySingleton<AuthRepository>(() => AuthRepository());
+  }
+  if (!sl.isRegistered<SocialRepository>()) {
+    sl.registerLazySingleton<SocialRepository>(() => SocialRepository());
   }
 
   Log.i(tag, 'DI complete');

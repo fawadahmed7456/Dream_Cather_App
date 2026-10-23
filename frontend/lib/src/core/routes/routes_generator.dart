@@ -40,6 +40,10 @@ class RoutesGenerator {
       case Routes.kOnboarding:
         page = const OnboardingWizardScreen();
         break;
+      case Routes.kBottomNavBar:
+      case Routes.kHome:
+        page = const MainNavigationScreen();
+        break;
       case Routes.kVerifyOTP:
         final args = settings.arguments;
         if (args is VerifyOTPArgs) {
