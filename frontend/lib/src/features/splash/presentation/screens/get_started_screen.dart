@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/config/theme/app_text_styles.dart';
 import '../../../../core/routes/routes_constants.dart';
+import '../../../../core/utils/size_utils.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           // Top curved brand section
@@ -36,23 +41,11 @@ class GetStartedScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Ask',
-                          style: GoogleFonts.fredoka(
-                            fontSize: 52,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: -1,
-                            height: 0.9,
-                          ),
+                          style: AppTextStyles.brandHero(context),
                         ),
                         Text(
                           'Asap',
-                          style: GoogleFonts.fredoka(
-                            fontSize: 52,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: -1,
-                            height: 0.9,
-                          ),
+                          style: AppTextStyles.brandHero(context),
                         ),
                       ],
                     ),
@@ -68,48 +61,46 @@ class GetStartedScreen extends StatelessWidget {
             child: SafeArea(
               top: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                padding: EdgeInsets.symmetric(horizontal: 28.w),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Spacer(),
                     Text(
                       'Anytime, Anywhere, Anyone',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF4A4A4A),
+                      style: AppTextStyles.text16Medium(
+                        context,
+                        textColor: isDark
+                            ? AppColors.darkTextSecondary
+                            : const Color(0xFF4A4A4A),
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 28),
+                    SizedBox(height: 28.h),
 
                     // Sign Up button
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
+                      height: 52.h,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pushNamed(context, Routes.kSignUp);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF289CEB),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: AppColors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.adaptSize),
                           ),
                         ),
                         child: Text(
                           'Sign up',
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTextStyles.primaryButton(context),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
 
                     // Already joined? Sign in
                     Row(
@@ -117,9 +108,11 @@ class GetStartedScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Already joined? ',
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            color: const Color(0xFF8E8E93),
+                          style: AppTextStyles.text14Normal(
+                            context,
+                            textColor: isDark
+                                ? AppColors.darkTextMuted
+                                : const Color(0xFF8E8E93),
                           ),
                         ),
                         GestureDetector(
@@ -128,11 +121,7 @@ class GetStartedScreen extends StatelessWidget {
                           },
                           child: Text(
                             'Sign in',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF289CEB),
-                            ),
+                            style: AppTextStyles.linkText(context),
                           ),
                         ),
                       ],
@@ -142,15 +131,16 @@ class GetStartedScreen extends StatelessWidget {
 
                     // Terms & Privacy disclaimer
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
+                      padding: EdgeInsets.only(bottom: 12.h),
                       child: Text(
                         'Tapping "Sign up" Or "Sign in" means you understand and accept Ask Asap\'s Privacy Policy and Terms of Service.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          color: const Color(0xFF8E8E93),
-                          height: 1.4,
-                        ),
+                        style: AppTextStyles.text11Normal(
+                          context,
+                          textColor: isDark
+                              ? AppColors.darkTextMuted
+                              : const Color(0xFF8E8E93),
+                        ).copyWith(height: 1.4),
                       ),
                     ),
                   ],
@@ -169,11 +159,11 @@ class _BottomCurveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    path.lineTo(0, size.height - 70);
+    path.lineTo(0, size.height - 70.h);
 
     // Deep smooth curve upward then downward
-    final firstControlPoint = Offset(size.width * 0.5, size.height + 40);
-    final firstEndPoint = Offset(size.width, size.height - 70);
+    final firstControlPoint = Offset(size.width * 0.5, size.height + 40.h);
+    final firstEndPoint = Offset(size.width, size.height - 70.h);
 
     path.quadraticBezierTo(
       firstControlPoint.dx,

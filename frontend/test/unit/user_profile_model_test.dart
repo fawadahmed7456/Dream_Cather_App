@@ -1,49 +1,67 @@
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:safar_share/src/features/profile/data/models/profile_model.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:dream_catcher/src/features/auth/data/models/user_profile.dart';
 
-// void main() {
-//   group('UserProfileModel.fromRow', () {
-//     test('parses a complete row', () {
-//       final m = UserProfileModel.fromRow({
-//         'id': 'u1',
-//         'full_name': 'Arslan',
-//         'phone': '+923111539073',
-//         'email': 'a@b.c',
-//         'avatar_url': 'https://cdn/x.jpg',
-//         'rating_avg': 4.5,
-//       });
-//       expect(m.id, 'u1');
-//       expect(m.name, 'Arslan');
-//       expect(m.phone, '+923111539073');
-//       expect(m.email, 'a@b.c');
-//       expect(m.avatarUrl, 'https://cdn/x.jpg');
-//       expect(m.rating, 4.5);
-//     });
+void main() {
+  group('UserProfile Model Tests', () {
+    test('parses from Json correctly', () {
+      final json = {
+        'id': 'u123',
+        'username': 'dreamer',
+        'email': 'dreamer@example.com',
+        'gender': 'Female',
+        'sexual_orientation': 'Heterosexual',
+        'birthday': '2000-01-15T00:00:00.000',
+        'ethnicity': 'Asian',
+        'personality_ie': 'I',
+        'personality_sn': 'N',
+        'personality_ft': 'F',
+        'personality_pj': 'P',
+        'relationship_status': 'Single',
+        'education_level': "Bachelor's",
+      };
 
-//     test('defaults every field on an empty row (crash-regression)', () {
-//       final m = UserProfileModel.fromRow({});
-//       expect(m.id, '');
-//       expect(m.name, '');
-//       expect(m.phone, '');
-//       expect(m.rating, 0);
-//       expect(m.avatarUrl, isNull);
-//     });
+      final profile = UserProfile.fromJson(json);
+      expect(profile.id, 'u123');
+      expect(profile.username, 'dreamer');
+      expect(profile.email, 'dreamer@example.com');
+      expect(profile.gender, 'Female');
+      expect(profile.mbtiCode, 'INFP');
+      expect(profile.relationshipStatus, 'Single');
+      expect(profile.educationLevel, "Bachelor's");
+    });
 
-//     test('imageUrl returns the real avatar when present', () {
-//       final m = UserProfileModel.fromRow({'id': 'u1', 'avatar_url': 'https://cdn/a.jpg'});
-//       expect(m.imageUrl, 'https://cdn/a.jpg');
-//     });
+    test('calculates MBTI code correctly', () {
+      const profile = UserProfile(
+        id: 'u1',
+        username: 'test',
+        email: 'test@example.com',
+        personalityIe: 'E',
+        personalitySn: 'N',
+        personalityFt: 'T',
+        personalityPj: 'J',
+      );
+      expect(profile.mbtiCode, 'ENTJ');
+    });
 
-//     test('imageUrl falls back to a deterministic seeded URL when blank/null', () {
-//       final none = UserProfileModel.fromRow({'id': 'u1'});
-//       expect(none.imageUrl, contains('u1'));
-//       final empty = UserProfileModel.fromRow({'id': 'u1', 'avatar_url': ''});
-//       expect(empty.imageUrl, contains('picsum'));
-//     });
-
-//     test('copyWith can clear the avatar', () {
-//       final m = UserProfileModel.fromRow({'id': 'u1', 'avatar_url': 'https://cdn/a.jpg'});
-//       expect(m.copyWith(clearAvatarUrl: true).avatarUrl, isNull);
-//     });
-//   });
-// }
+    test('serializes to Json correctly', () {
+      const profile = UserProfile(
+        id: 'u1',
+        username: 'coder',
+        email: 'coder@test.com',
+        gender: 'Male',
+        personalityIe: 'I',
+        personalitySn: 'S',
+        personalityFt: 'T',
+        personalityPj: 'J',
+      );
+      final json = profile.toJson();
+      expect(json['username'], 'coder');
+      expect(json['email'], 'coder@test.com');
+      expect(json['gender'], 'Male');
+      expect(json['personality_ie'], 'I');
+      expect(json['personality_sn'], 'S');
+      expect(json['personality_ft'], 'T');
+      expect(json['personality_pj'], 'J');
+    });
+  });
+}

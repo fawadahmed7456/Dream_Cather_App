@@ -136,10 +136,12 @@ class AppColor {
   static const Color success = green;
   static const Color warning = yellow;
   static const Color error = red;
+  static const Color coralRed = red;
 
   static const Color darkBgDeep = Color(0xFF0A1628);
   static const Color darkBgMain = Color(0xFF0F1D30);
   static const Color darkBgCard = Color(0xFF162A42);
+  static const Color darkCard = darkBgCard;
   static const Color darkBgInput = Color(0xFF12233A);
   static const Color darkBgNav =
       Color(0xEB0F1D30); // 0.92 opacity approximation

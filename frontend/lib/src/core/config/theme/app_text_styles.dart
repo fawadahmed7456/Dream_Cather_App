@@ -71,11 +71,27 @@ class Styles {
         color: textColor ?? (Theme.of(context).colorScheme.onSurface),
       );
 
+  /// Text style with font size 15 and normal weight (400).
+  static TextStyle text15Normal(BuildContext context, {Color? textColor}) =>
+      GoogleFonts.outfit(
+        fontSize: 15.fSize,
+        fontWeight: FontWeight.w400,
+        color: textColor ?? (Theme.of(context).colorScheme.onSurface),
+      );
+
   /// Text style with font size 16 and normal weight (400).
   static TextStyle text16Normal(BuildContext context, {Color? textColor}) =>
       GoogleFonts.outfit(
         fontSize: 16.fSize,
         fontWeight: FontWeight.w400,
+        color: textColor ?? (Theme.of(context).colorScheme.onSurface),
+      );
+
+  /// Text style with font size 16 and bold weight (700).
+  static TextStyle text16Bold(BuildContext context, {Color? textColor}) =>
+      GoogleFonts.outfit(
+        fontSize: 16.fSize,
+        fontWeight: FontWeight.w700,
         color: textColor ?? (Theme.of(context).colorScheme.onSurface),
       );
 
@@ -367,6 +383,99 @@ class Styles {
   static TextStyle get button => GoogleFonts.outfit(
         fontSize: 16.fSize,
         fontWeight: FontWeight.w600,
+      );
+
+  // ── Dynamic Context-Aware Semantic Styles ─────────────────────────────────
+  /// Dedicated style for text field typed input text
+  static TextStyle inputText(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 16.fSize,
+        fontWeight: FontWeight.w500,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Dedicated style for text field placeholder/hint
+  static TextStyle inputHint(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 14.fSize,
+        fontWeight: FontWeight.w400,
+        color: AppColors.lightTextMuted,
+      );
+
+  /// Dedicated style for field headers/labels
+  static TextStyle inputLabel(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 14.fSize,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Auth Screen Header / Headline
+  static TextStyle authTitle(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 26.fSize,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Auth Screen Subtitle / Description
+  static TextStyle authSubtitle(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 14.fSize,
+        fontWeight: FontWeight.w400,
+        color: AppColors.lightTextSecondary,
+      );
+
+  /// Primary action button text
+  static TextStyle primaryButton(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 16.fSize,
+        fontWeight: FontWeight.w600,
+        color: AppColors.white,
+      );
+
+  /// Interactive link text
+  static TextStyle linkText(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 14.fSize,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.primary,
+      );
+
+  /// Wizard / Step headline
+  static TextStyle wizardTitle(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 24.fSize,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Wizard option label
+  static TextStyle wizardOption(BuildContext context, {required bool isSelected}) =>
+      GoogleFonts.outfit(
+        fontSize: 15.5.fSize,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+        color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Disclaimer / warning text
+  static TextStyle disclaimer(BuildContext context, {Color? color}) =>
+      GoogleFonts.outfit(
+        fontSize: 12.5.fSize,
+        fontWeight: FontWeight.w400,
+        color: color ?? AppColors.coralRed,
+        height: 1.4,
+      );
+
+  /// Muted helper text
+  static TextStyle helperText(BuildContext context) => GoogleFonts.outfit(
+        fontSize: 13.fSize,
+        fontWeight: FontWeight.w400,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkTextSecondary
+            : const Color(0xFF8E8E93),
+        height: 1.4,
+      );
+
+  /// Brand hero typography for splash/get-started
+  static TextStyle brandHero(BuildContext context) => GoogleFonts.fredoka(
+        fontSize: 52.fSize,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+        letterSpacing: -1,
+        height: 0.9,
       );
 }
 

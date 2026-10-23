@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/config/theme/app_text_styles.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/routes/routes_constants.dart';
+import '../../../../core/utils/size_utils.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/repositories/auth_repository.dart';
 
@@ -135,7 +137,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to save profile: $e'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: AppColors.coralRed,
         ),
       );
     }
@@ -143,48 +145,50 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final progress = (_currentStep + 1) / _totalSteps;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: theme.colorScheme.onSurface,
+            size: 20.adaptSize,
+          ),
           onPressed: _previousStep,
         ),
         title: Text(
           'Sign Up',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.text18Semibold(context),
         ),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
+          preferredSize: Size.fromHeight(4.h),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: const Color(0xFFF0F0F0),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF289CEB)),
-            minHeight: 3,
+            backgroundColor: isDark ? AppColors.darkCard : const Color(0xFFF0F0F0),
+            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+            minHeight: 3.h,
           ),
         ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: _buildCurrentStepContent(),
+                  child: _buildCurrentStepContent(context),
                 ),
               ),
-              _buildBottomActionButtons(),
+              _buildBottomActionButtons(context),
             ],
           ),
         ),
@@ -192,64 +196,67 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     );
   }
 
-  Widget _buildCurrentStepContent() {
+  Widget _buildCurrentStepContent(BuildContext context) {
     switch (_currentStep) {
       case 0:
-        return _buildUsernameStep();
+        return _buildUsernameStep(context);
       case 1:
-        return _buildGenderStep();
+        return _buildGenderStep(context);
       case 2:
-        return _buildSexualOrientationStep();
+        return _buildSexualOrientationStep(context);
       case 3:
-        return _buildBirthdayStep();
+        return _buildBirthdayStep(context);
       case 4:
-        return _buildEthnicityStep();
+        return _buildEthnicityStep(context);
       case 5:
-        return _buildPersonalityStep();
+        return _buildPersonalityStep(context);
       case 6:
-        return _buildRelationshipStep();
+        return _buildRelationshipStep(context);
       case 7:
-        return _buildEducationStep();
+        return _buildEducationStep(context);
       default:
         return const SizedBox();
     }
   }
 
   // ── Step 1: Username ────────────────────────────────────────────────────────
-  Widget _buildUsernameStep() {
+  Widget _buildUsernameStep(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your Username?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         TextFormField(
           controller: _usernameController,
-          style: GoogleFonts.outfit(fontSize: 16),
+          style: AppTextStyles.inputText(context),
           decoration: InputDecoration(
             hintText: 'Username',
-            hintStyle: GoogleFonts.outfit(color: const Color(0xFFB1B1B1)),
+            hintStyle: AppTextStyles.inputHint(context),
             filled: true,
-            fillColor: const Color(0xFFF7F8FA),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            fillColor: isDark ? AppColors.darkCard : const Color(0xFFF7F8FA),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(12.adaptSize),
+              borderSide: BorderSide(
+                color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderRadius: BorderRadius.circular(12.adaptSize),
+              borderSide: BorderSide(
+                color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF289CEB), width: 1.5),
+              borderRadius: BorderRadius.circular(12.adaptSize),
+              borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
             ),
             errorText: _usernameError,
           ),
@@ -257,35 +264,28 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             if (_usernameError != null) setState(() => _usernameError = null);
           },
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Text(
           'This will be shown on your profile. Username cannot be changed',
-          style: GoogleFonts.outfit(
-            fontSize: 12.5,
-            color: const Color(0xFFEF3826),
-          ),
+          style: AppTextStyles.disclaimer(context),
         ),
       ],
     );
   }
 
   // ── Step 2: Gender ──────────────────────────────────────────────────────────
-  Widget _buildGenderStep() {
+  Widget _buildGenderStep(BuildContext context) {
     final mainGenders = ['Male', 'Female', 'Others'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           'What gender do you identify as?',
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         ...mainGenders.map((g) {
           final isOthers = g == 'Others';
           final isSelected = _selectedGender == g ||
@@ -295,14 +295,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
                   _selectedGender != 'Female');
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildSelectableOption(
+              context: context,
               label: isOthers && isSelected ? _selectedGender! : g,
               hasArrow: isOthers,
               isSelected: isSelected,
               onTap: () {
                 if (isOthers) {
-                  _showDetailedGenderPicker();
+                  _showDetailedGenderPicker(context);
                 } else {
                   setState(() => _selectedGender = g);
                 }
@@ -314,7 +315,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     );
   }
 
-  void _showDetailedGenderPicker() {
+  void _showDetailedGenderPicker(BuildContext context) {
     final list = [
       'Agender',
       'Androgyne',
@@ -336,12 +337,14 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
       'Other',
     ];
 
+    final theme = Theme.of(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.adaptSize)),
       ),
       builder: (ctx) {
         return DraggableScrollableSheet(
@@ -352,13 +355,10 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.adaptSize),
                   child: Text(
                     'Select Gender',
-                    style: GoogleFonts.outfit(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.text18Semibold(context),
                   ),
                 ),
                 const Divider(height: 1),
@@ -372,14 +372,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
                       return ListTile(
                         title: Text(
                           item,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                            color: isSelected ? const Color(0xFF289CEB) : Colors.black87,
-                          ),
+                          style: isSelected
+                              ? AppTextStyles.text15Semibold(
+                                  context,
+                                  textColor: theme.colorScheme.primary,
+                                )
+                              : AppTextStyles.text15Normal(context),
                         ),
                         trailing: isSelected
-                            ? const Icon(Icons.check, color: Color(0xFF289CEB))
+                            ? Icon(Icons.check, color: theme.colorScheme.primary)
                             : null,
                         onTap: () {
                           setState(() => _selectedGender = item);
@@ -398,7 +399,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Step 3: Sexual Orientation ──────────────────────────────────────────────
-  Widget _buildSexualOrientationStep() {
+  Widget _buildSexualOrientationStep(BuildContext context) {
     final orientations = [
       'Heterosexual',
       'Bisexual',
@@ -414,21 +415,18 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your sexual orientation?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         ...orientations.map((item) {
           final isSelected = _selectedSexualOrientation == item;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildSelectableOption(
+              context: context,
               label: item,
               isSelected: isSelected,
               onTap: () {
@@ -442,97 +440,86 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Step 4: Birthday ────────────────────────────────────────────────────────
-  Widget _buildBirthdayStep() {
+  Widget _buildBirthdayStep(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final formatted = DateFormat('MMMM dd, yyyy').format(_selectedBirthday);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your birthday?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         InkWell(
-          onTap: _showCupertinoDatePicker,
-          borderRadius: BorderRadius.circular(12),
+          onTap: () => _showCupertinoDatePicker(context),
+          borderRadius: BorderRadius.circular(12.adaptSize),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F8FA),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              color: isDark ? AppColors.darkCard : const Color(0xFFF7F8FA),
+              borderRadius: BorderRadius.circular(12.adaptSize),
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_today_outlined,
-                    color: Color(0xFF8E8E93), size: 20),
-                const SizedBox(width: 12),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  color: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
+                  size: 20.adaptSize,
+                ),
+                SizedBox(width: 12.w),
                 Text(
                   formatted,
-                  style: GoogleFonts.outfit(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF1C1C1E),
-                  ),
+                  style: AppTextStyles.inputText(context),
                 ),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           'Your age will be used for profile matching. Your profile will show your age, not your date of birth. This cannot be changed later.',
-          style: GoogleFonts.outfit(
-            fontSize: 12.5,
-            color: const Color(0xFFEF3826),
-            height: 1.4,
-          ),
+          style: AppTextStyles.disclaimer(context),
         ),
       ],
     );
   }
 
-  void _showCupertinoDatePicker() {
+  void _showCupertinoDatePicker(BuildContext context) {
+    final theme = Theme.of(context);
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.adaptSize)),
       ),
       builder: (ctx) {
         return SizedBox(
-          height: 280,
+          height: 280.h,
           child: Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Select Birthday',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.text16Semibold(context),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
                       child: Text(
                         'Done',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF289CEB),
-                        ),
+                        style: AppTextStyles.linkText(context),
                       ),
                     ),
                   ],
@@ -558,7 +545,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Step 5: Ethnicity ───────────────────────────────────────────────────────
-  Widget _buildEthnicityStep() {
+  Widget _buildEthnicityStep(BuildContext context) {
     final ethnicities = [
       'Asian',
       'Black/African descent',
@@ -572,21 +559,18 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your ethnicity?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         ...ethnicities.map((item) {
           final isSelected = _selectedEthnicity == item;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildSelectableOption(
+              context: context,
               label: item,
               isSelected: isSelected,
               onTap: () {
@@ -600,44 +584,44 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Step 6: MBTI Personality Type ───────────────────────────────────────────
-  Widget _buildPersonalityStep() {
+  Widget _buildPersonalityStep(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your personality type?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
 
         // 4 MBTI Segmented dimension selectors
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildMbtiSegment(
+              context: context,
               opt1: 'I',
               opt2: 'E',
               selected: _personalityIE,
               onSelect: (v) => setState(() => _personalityIE = v),
             ),
             _buildMbtiSegment(
+              context: context,
               opt1: 'S',
               opt2: 'N',
               selected: _personalitySN,
               onSelect: (v) => setState(() => _personalitySN = v),
             ),
             _buildMbtiSegment(
+              context: context,
               opt1: 'F',
               opt2: 'T',
               selected: _personalityFT,
               onSelect: (v) => setState(() => _personalityFT = v),
             ),
             _buildMbtiSegment(
+              context: context,
               opt1: 'P',
               opt2: 'J',
               selected: _personalityPJ,
@@ -645,58 +629,69 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
         Text(
           'The personality type used follows the 16 Personalities. It will be used as a filter for more accurate matching.',
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            color: const Color(0xFF8E8E93),
-            height: 1.4,
-          ),
+          style: AppTextStyles.helperText(context),
         ),
       ],
     );
   }
 
   Widget _buildMbtiSegment({
+    required BuildContext context,
     required String opt1,
     required String opt2,
     required String? selected,
     required ValueChanged<String> onSelect,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        color: isDark ? AppColors.darkCard : const Color(0xFFF7F8FA),
+        borderRadius: BorderRadius.circular(10.adaptSize),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildMbtiChip(opt1, selected == opt1, () => onSelect(opt1)),
-          _buildMbtiChip(opt2, selected == opt2, () => onSelect(opt2)),
+          _buildMbtiChip(context, opt1, selected == opt1, () => onSelect(opt1)),
+          _buildMbtiChip(context, opt2, selected == opt2, () => onSelect(opt2)),
         ],
       ),
     );
   }
 
-  Widget _buildMbtiChip(String label, bool isSelected, VoidCallback onTap) {
+  Widget _buildMbtiChip(
+    BuildContext context,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 38,
-        height: 48,
+        width: 38.w,
+        height: 48.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF289CEB) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.adaptSize),
         ),
         child: Text(
           label,
-          style: GoogleFonts.outfit(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: isSelected ? Colors.white : const Color(0xFF2C2C2E),
+          style: AppTextStyles.text16Bold(
+            context,
+            textColor: isSelected
+                ? AppColors.white
+                : (isDark ? AppColors.darkTextPrimary : const Color(0xFF2C2C2E)),
           ),
         ),
       ),
@@ -704,7 +699,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Step 7: Relationship Status ─────────────────────────────────────────────
-  Widget _buildRelationshipStep() {
+  Widget _buildRelationshipStep(BuildContext context) {
     final list = [
       'Single',
       'Seeing someone/dating',
@@ -717,21 +712,18 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your relationship status?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         ...list.map((item) {
           final isSelected = _selectedRelationshipStatus == item;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildSelectableOption(
+              context: context,
               label: item,
               isSelected: isSelected,
               onTap: () {
@@ -740,20 +732,17 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             ),
           );
         }),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           'Your relationship status will be used as a filter for more accurate matching.',
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            color: const Color(0xFF8E8E93),
-          ),
+          style: AppTextStyles.helperText(context),
         ),
       ],
     );
   }
 
   // ── Step 8: Education Level ─────────────────────────────────────────────────
-  Widget _buildEducationStep() {
+  Widget _buildEducationStep(BuildContext context) {
     final list = [
       'Middle School',
       'High school',
@@ -766,21 +755,18 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "What's your highest education level?",
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1C1C1E),
-          ),
+          style: AppTextStyles.wizardTitle(context),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         ...list.map((item) {
           final isSelected = _selectedEducationLevel == item;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
+            padding: EdgeInsets.only(bottom: 12.h),
             child: _buildSelectableOption(
+              context: context,
               label: item,
               isSelected: isSelected,
               onTap: () {
@@ -789,13 +775,10 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
             ),
           );
         }),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           'Your education level will be used as a filter for more accurate matching.',
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            color: const Color(0xFF8E8E93),
-          ),
+          style: AppTextStyles.helperText(context),
         ),
       ],
     );
@@ -803,22 +786,30 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
 
   // ── Shared Option Box ───────────────────────────────────────────────────────
   Widget _buildSelectableOption({
+    required BuildContext context,
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
     bool hasArrow = false,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.adaptSize),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF289CEB) : const Color(0xFFF7F8FA),
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected
+              ? theme.colorScheme.primary
+              : (isDark ? AppColors.darkCard : const Color(0xFFF7F8FA)),
+          borderRadius: BorderRadius.circular(12.adaptSize),
           border: Border.all(
-            color: isSelected ? const Color(0xFF289CEB) : const Color(0xFFE5E7EB),
+            color: isSelected
+                ? theme.colorScheme.primary
+                : (isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB)),
           ),
         ),
         child: Row(
@@ -826,17 +817,15 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
           children: [
             Text(
               label,
-              style: GoogleFonts.outfit(
-                fontSize: 15.5,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? Colors.white : const Color(0xFF1C1C1E),
-              ),
+              style: AppTextStyles.wizardOption(context, isSelected: isSelected),
             ),
             if (hasArrow)
               Icon(
                 Icons.chevron_right,
-                color: isSelected ? Colors.white : const Color(0xFF8E8E93),
-                size: 20,
+                color: isSelected
+                    ? AppColors.white
+                    : (isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93)),
+                size: 20.adaptSize,
               ),
           ],
         ),
@@ -845,7 +834,9 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
   }
 
   // ── Bottom Action Buttons ───────────────────────────────────────────────────
-  Widget _buildBottomActionButtons() {
+  Widget _buildBottomActionButtons(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final isSkippable = _currentStep >= 5; // Personality, Relationship, Education
 
     return Column(
@@ -853,7 +844,7 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
       children: [
         SizedBox(
           width: double.infinity,
-          height: 52,
+          height: 52.h,
           child: ElevatedButton(
             onPressed: _isSaving || _isCheckingUsername
                 ? null
@@ -865,41 +856,37 @@ class _OnboardingWizardScreenState extends State<OnboardingWizardScreen> {
                     }
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF289CEB),
-              foregroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: AppColors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.adaptSize),
               ),
             ),
             child: _isSaving || _isCheckingUsername
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
+                ? SizedBox(
+                    width: 22.adaptSize,
+                    height: 22.adaptSize,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.5,
+                      color: AppColors.white,
+                      strokeWidth: 2.5.w,
                     ),
                   )
                 : Text(
                     _currentStep == _totalSteps - 1 ? 'Complete' : 'Continue',
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.primaryButton(context),
                   ),
           ),
         ),
         if (isSkippable) ...[
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           TextButton(
             onPressed: _isSaving ? null : _nextStep,
             child: Text(
               'Skip',
-              style: GoogleFonts.outfit(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF8E8E93),
+              style: AppTextStyles.text15Semibold(
+                context,
+                textColor: isDark ? AppColors.darkTextMuted : const Color(0xFF8E8E93),
               ),
             ),
           ),

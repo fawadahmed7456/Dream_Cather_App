@@ -25,9 +25,17 @@ class RoutesGenerator {
         page = const HouseRulesScreen();
         break;
       case Routes.kEmailVerification:
-        page = EmailVerificationScreen(
-          email: settings.arguments as String? ?? '',
-        );
+        final arg = settings.arguments;
+        if (arg is EmailVerificationArgs) {
+          page = EmailVerificationScreen(
+            email: arg.email,
+            password: arg.password,
+          );
+        } else {
+          page = EmailVerificationScreen(
+            email: arg as String? ?? '',
+          );
+        }
         break;
       case Routes.kOnboarding:
         page = const OnboardingWizardScreen();

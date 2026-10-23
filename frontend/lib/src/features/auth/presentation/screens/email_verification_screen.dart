@@ -1,13 +1,31 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/config/theme/app_text_styles.dart';
+import '../../../../core/extensions/context_extension.dart';
 import '../../../../core/routes/routes_constants.dart';
+import '../../../../core/utils/size_utils.dart';
+
+class EmailVerificationArgs {
+  final String email;
+  final String? password;
+
+  const EmailVerificationArgs({
+    required this.email,
+    this.password,
+  });
+}
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;
+  final String? password;
 
-  const EmailVerificationScreen({super.key, required this.email});
+  const EmailVerificationScreen({
+    super.key,
+    required this.email,
+    this.password,
+  });
 
   @override
   State<EmailVerificationScreen> createState() =>
@@ -23,8 +41,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void initState() {
     super.initState();
-    // Periodically poll auth state every 4 seconds to detect when user clicked verify link
-    _timer = Timer.periodic(const Duration(seconds: 4), (_) => _checkVerification());
+    // Auto-check every 5 seconds if password is available
+    if (widget.password != null && widget.password!.isNotEmpty) {
+      _timer = Timer.periodic(
+        const Duration(seconds: 5),
+        (_) => _checkVerificationSilently(),
+      );
+    }
   }
 
   @override
@@ -33,29 +56,62 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     super.dispose();
   }
 
-  Future<void> _checkVerification() async {
+  Future<bool> _attemptVerify() async {
+    // 1. Try checking existing active session
     try {
-      final res = await Supabase.instance.client.auth.getUser();
-      if (res.user?.emailConfirmedAt != null) {
-        _timer?.cancel();
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.kHouseRules,
-            (route) => false,
-          );
-        }
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null && user.emailConfirmedAt != null) {
+        return true;
       }
     } catch (_) {}
+
+    // 2. If password is available, try signing in to sync confirmation
+    if (widget.password != null && widget.password!.isNotEmpty) {
+      try {
+        final res = await Supabase.instance.client.auth.signInWithPassword(
+          email: widget.email,
+          password: widget.password!,
+        );
+        if (res.user?.emailConfirmedAt != null) {
+          return true;
+        }
+      } catch (_) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  Future<void> _checkVerificationSilently() async {
+    final success = await _attemptVerify();
+    if (success && mounted) {
+      _timer?.cancel();
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.kHouseRules,
+        (route) => false,
+      );
+    }
   }
 
   Future<void> _manualCheck() async {
     setState(() => _isChecking = true);
-    await _checkVerification();
-    if (mounted) {
+    final success = await _attemptVerify();
+    if (!mounted) return;
+
+    if (success) {
+      _timer?.cancel();
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Routes.kHouseRules,
+        (route) => false,
+      );
+    } else {
       setState(() {
         _isChecking = false;
-        _message = 'Email not yet verified. Please click the link in your email inbox.';
+        _message =
+            'Email not yet verified. Please tap the confirmation link in your email inbox, then try again.';
       });
     }
   }
@@ -70,7 +126,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       if (mounted) {
         setState(() {
           _isResending = false;
-          _message = 'Verification email resent! Check your spam folder if needed.';
+          _message = 'Verification email resent! Check your inbox or spam folder.';
         });
       }
     } catch (e) {
@@ -86,122 +142,166 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: context.colorScheme.onSurface,
+            size: 20.adaptSize,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: 16.h),
               Container(
-                width: 64,
-                height: 64,
+                width: 60.adaptSize,
+                height: 60.adaptSize,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3F2FD),
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(16.adaptSize),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.mark_email_read_outlined,
-                  color: Color(0xFF289CEB),
-                  size: 32,
+                  color: context.colorScheme.primary,
+                  size: 32.adaptSize,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 20.h),
               Text(
                 'Verify your email',
-                style: GoogleFonts.outfit(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1C1C1E),
-                ),
+                style: AppTextStyles.authTitle(context),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 8.h),
               Text(
-                'We have sent a verification email to:',
-                style: GoogleFonts.outfit(
-                  fontSize: 15,
-                  color: const Color(0xFF8E8E93),
-                ),
+                'We have sent a verification link to:',
+                style: AppTextStyles.authSubtitle(context),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 widget.email,
-                style: GoogleFonts.outfit(
-                  fontSize: 15,
+                style: AppTextStyles.inputText(context).copyWith(
+                  color: context.colorScheme.primary,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF289CEB),
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'Please click the link inside to verify your account and continue setting up your profile.',
-                style: GoogleFonts.outfit(
-                  fontSize: 14,
-                  color: const Color(0xFF767676),
-                  height: 1.45,
+              SizedBox(height: 16.h),
+
+              // Informative note regarding the localhost redirect
+              Container(
+                padding: EdgeInsets.all(12.adaptSize),
+                decoration: BoxDecoration(
+                  color: AppColors.lightBgInput,
+                  borderRadius: BorderRadius.circular(10.adaptSize),
+                  border: Border.all(color: context.colorScheme.outline),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: context.colorScheme.primary,
+                      size: 20.adaptSize,
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Text(
+                        'Click "Confirm your email" in your inbox. Even if the browser shows "cannot connect to localhost", your email is confirmed! Then simply tap below.',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.lightTextSecondary,
+                          fontSize: 12.5.fSize,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
               if (_message != null) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: 14.h),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12.adaptSize),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF7F8FA),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFE5E7EB)),
+                    color: AppColors.lightTeal,
+                    borderRadius: BorderRadius.circular(10.adaptSize),
+                    border: Border.all(color: AppColors.teal),
                   ),
                   child: Text(
                     _message!,
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: const Color(0xFF4A4A4A),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.nearBlack,
                     ),
                   ),
                 ),
               ],
+
               const Spacer(),
-              // Check button
+
+              // Primary verification button
               SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: 52.h,
                 child: ElevatedButton(
                   onPressed: _isChecking ? null : _manualCheck,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF289CEB),
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.colorScheme.primary,
+                    foregroundColor: AppColors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.adaptSize),
                     ),
                   ),
                   child: _isChecking
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
+                      ? SizedBox(
+                          width: 22.adaptSize,
+                          height: 22.adaptSize,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: AppColors.white,
                             strokeWidth: 2.5,
                           ),
                         )
                       : Text(
                           "I've Verified My Email",
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: AppTextStyles.primaryButton(context),
                         ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 12.h),
+
+              // Go to sign in button
+              SizedBox(
+                width: double.infinity,
+                height: 48.h,
+                child: OutlinedButton(
+                  onPressed: () {
+                    _timer?.cancel();
+                    Navigator.pushReplacementNamed(context, Routes.kLogin);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: context.colorScheme.primary,
+                    side: BorderSide(color: context.colorScheme.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.adaptSize),
+                    ),
+                  ),
+                  child: Text(
+                    'Go to Sign In',
+                    style: AppTextStyles.linkText(context),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
+
               // Resend email button
               Center(
                 child: TextButton(
@@ -210,15 +310,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     _isResending
                         ? 'Resending...'
                         : "Didn't receive an email? Resend",
-                    style: GoogleFonts.outfit(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF289CEB),
-                    ),
+                    style: AppTextStyles.authSubtitle(context),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 16.h),
             ],
           ),
         ),

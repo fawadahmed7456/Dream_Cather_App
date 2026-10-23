@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/config/theme/app_text_styles.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/extensions/context_extension.dart';
 import '../../../../core/routes/routes_constants.dart';
+import '../../../../core/utils/size_utils.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../bloc/auth_cubit.dart';
 import '../bloc/auth_state.dart';
@@ -74,7 +77,7 @@ class _LoginBodyState extends State<_LoginBody> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: context.colorScheme.error,
             ),
           );
         }
@@ -83,82 +86,72 @@ class _LoginBodyState extends State<_LoginBody> {
         final isLoading = state.status == AuthStatus.loading;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: context.colorScheme.surface,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: context.colorScheme.surface,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new,
-                  color: Colors.black, size: 20),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: context.colorScheme.onSurface,
+                size: 20.adaptSize,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
                       'Welcome back',
-                      style: GoogleFonts.outfit(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1C1C1E),
-                      ),
+                      style: AppTextStyles.authTitle(context),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       'Sign in to your account with your email and password.',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        color: const Color(0xFF8E8E93),
-                      ),
+                      style: AppTextStyles.authSubtitle(context),
                     ),
-                    const SizedBox(height: 36),
+                    SizedBox(height: 36.h),
 
                     // Email input
                     Text(
                       'Email Address',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2C2C2E),
-                      ),
+                      style: AppTextStyles.inputLabel(context),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.outfit(fontSize: 16),
+                      style: AppTextStyles.inputText(context),
                       decoration: InputDecoration(
                         hintText: 'Enter your email',
-                        hintStyle: GoogleFonts.outfit(
-                          color: const Color(0xFFB1B1B1),
-                        ),
+                        hintStyle: AppTextStyles.inputHint(context),
                         filled: true,
-                        fillColor: const Color(0xFFF7F8FA),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
+                        fillColor: AppColors.lightBgInput,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB)),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(color: context.colorScheme.outline),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB)),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(color: context.colorScheme.outline),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF289CEB), width: 1.5),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(
+                            color: context.colorScheme.primary,
+                            width: 1.5,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -171,54 +164,49 @@ class _LoginBodyState extends State<_LoginBody> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
 
                     // Password input
                     Text(
                       'Password',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2C2C2E),
-                      ),
+                      style: AppTextStyles.inputLabel(context),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      style: GoogleFonts.outfit(fontSize: 16),
+                      style: AppTextStyles.inputText(context),
                       decoration: InputDecoration(
                         hintText: 'Enter your password',
-                        hintStyle: GoogleFonts.outfit(
-                          color: const Color(0xFFB1B1B1),
-                        ),
+                        hintStyle: AppTextStyles.inputHint(context),
                         filled: true,
-                        fillColor: const Color(0xFFF7F8FA),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
+                        fillColor: AppColors.lightBgInput,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB)),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(color: context.colorScheme.outline),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB)),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(color: context.colorScheme.outline),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF289CEB), width: 1.5),
+                          borderRadius: BorderRadius.circular(12.adaptSize),
+                          borderSide: BorderSide(
+                            color: context.colorScheme.primary,
+                            width: 1.5,
+                          ),
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF8E8E93),
+                            color: AppColors.lightTextSecondary,
+                            size: 20.adaptSize,
                           ),
                           onPressed: () {
                             setState(() {
@@ -234,41 +222,38 @@ class _LoginBodyState extends State<_LoginBody> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 36),
+                    SizedBox(height: 36.h),
 
                     // Sign In button
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
+                      height: 52.h,
                       child: ElevatedButton(
                         onPressed: isLoading ? null : () => _onSignIn(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF289CEB),
-                          foregroundColor: Colors.white,
+                          backgroundColor: context.colorScheme.primary,
+                          foregroundColor: AppColors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.adaptSize),
                           ),
                         ),
                         child: isLoading
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
+                            ? SizedBox(
+                                width: 22.adaptSize,
+                                height: 22.adaptSize,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: AppColors.white,
                                   strokeWidth: 2.5,
                                 ),
                               )
                             : Text(
                                 'Sign in',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: AppTextStyles.primaryButton(context),
                               ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
 
                     // Don't have an account? Sign up
                     Row(
@@ -276,10 +261,7 @@ class _LoginBodyState extends State<_LoginBody> {
                       children: [
                         Text(
                           "Don't have an account? ",
-                          style: GoogleFonts.outfit(
-                            fontSize: 14,
-                            color: const Color(0xFF8E8E93),
-                          ),
+                          style: AppTextStyles.authSubtitle(context),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -288,11 +270,7 @@ class _LoginBodyState extends State<_LoginBody> {
                           },
                           child: Text(
                             'Sign up',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF289CEB),
-                            ),
+                            style: AppTextStyles.linkText(context),
                           ),
                         ),
                       ],

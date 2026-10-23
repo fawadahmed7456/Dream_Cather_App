@@ -29,32 +29,42 @@ class AppTheme {
         secondary: AppColors.accent,
         onSecondary: AppColors.white,
         surface: AppColors.white,
-        onSurface: AppColors.nearBlack,
+        onSurface: Color(0xFF1C1C1E),
         surfaceContainerHighest: AppColors.white,
-        onSurfaceVariant: AppColors.slate,
+        onSurfaceVariant: Color(0xFF1C1C1E),
         error: AppColors.danger,
         onError: AppColors.white,
         outline: AppColors.lightBorder,
       ),
 
       // ── Typography
-      textTheme: GoogleFonts.outfitTextTheme()
+      textTheme: GoogleFonts.outfitTextTheme(ThemeData.light().textTheme)
           .copyWith(
-            displayLarge: AppTextStyles.displayLarge,
-            displayMedium: AppTextStyles.displayMedium,
-            headlineLarge: AppTextStyles.headlineLarge,
-            headlineMedium: AppTextStyles.headlineMedium,
-            headlineSmall: AppTextStyles.headlineSmall,
-            bodyLarge: AppTextStyles.bodyLarge,
-            bodyMedium: AppTextStyles.bodyMedium,
-            bodySmall: AppTextStyles.bodySmall,
-            labelLarge: AppTextStyles.labelLarge,
-            labelMedium: AppTextStyles.labelMedium,
-            labelSmall: AppTextStyles.labelSmall,
+            displayLarge: AppTextStyles.displayLarge.copyWith(color: const Color(0xFF1C1C1E)),
+            displayMedium: AppTextStyles.displayMedium.copyWith(color: const Color(0xFF1C1C1E)),
+            headlineLarge: AppTextStyles.headlineLarge.copyWith(color: const Color(0xFF1C1C1E)),
+            headlineMedium: AppTextStyles.headlineMedium.copyWith(color: const Color(0xFF1C1C1E)),
+            headlineSmall: AppTextStyles.headlineSmall.copyWith(color: const Color(0xFF1C1C1E)),
+            bodyLarge: AppTextStyles.bodyLarge.copyWith(color: const Color(0xFF1C1C1E)),
+            bodyMedium: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF1C1C1E)),
+            bodySmall: AppTextStyles.bodySmall.copyWith(color: const Color(0xFF767676)),
+            titleMedium: GoogleFonts.outfit(
+              fontSize: 16.fSize,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF1C1C1E),
+            ),
+            titleLarge: GoogleFonts.outfit(
+              fontSize: 18.fSize,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1C1C1E),
+            ),
+            labelLarge: AppTextStyles.labelLarge.copyWith(color: const Color(0xFF1C1C1E)),
+            labelMedium: AppTextStyles.labelMedium.copyWith(color: const Color(0xFF767676)),
+            labelSmall: AppTextStyles.labelSmall.copyWith(color: const Color(0xFF8E8E93)),
           )
           .apply(
-            bodyColor: AppColors.lightTextPrimary,
-            displayColor: AppColors.lightTextPrimary,
+            bodyColor: const Color(0xFF1C1C1E),
+            displayColor: const Color(0xFF1C1C1E),
           ),
 
       // ── App Bar
@@ -131,12 +141,18 @@ class AppTheme {
         errorBorder: _inputBorder(AppColors.danger),
         focusedErrorBorder: _inputBorder(AppColors.danger),
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.lightTextMuted,
+        hintStyle: GoogleFonts.outfit(
+          fontSize: 14.fSize,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF9E9E9E),
         ),
-        labelStyle: AppTextStyles.labelMedium.copyWith(
-          color: AppColors.lightTextSecondary,
+        labelStyle: GoogleFonts.outfit(
+          fontSize: 14.fSize,
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF1C1C1E),
         ),
+        prefixIconColor: const Color(0xFF767676),
+        suffixIconColor: const Color(0xFF767676),
       ),
 
       // ── Bottom Navigation Bar

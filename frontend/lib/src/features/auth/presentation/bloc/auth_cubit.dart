@@ -55,8 +55,48 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final res = await _repository.signUp(email: email, password: password);
       final user = res.user;
-      
-      // If email confirmation is required by Supabase
+
+      // In Supabase, if the user is already registered, identities will be empty
+      // and Supabase will NOT send a duplicate confirmation email.
+      if (user != null && user.identities != null && user.identities!.isEmpty) {
+        Log.i(_tag, 'User already exists. Attempting sign-in with password...');
+        try {
+          final signInRes = await _repository.signIn(email: email, password: password);
+          final authedUser = signInRes.user;
+          if (authedUser != null) {
+            if (authedUser.emailConfirmedAt == null) {
+              emit(state.copyWith(
+                status: AuthStatus.needsEmailVerification,
+                email: email,
+              ));
+            } else {
+              final profile = await _repository.fetchUserProfile(authedUser.id);
+              if (profile == null || profile.username.isEmpty) {
+                emit(state.copyWith(
+                  status: AuthStatus.needsOnboarding,
+                  email: email,
+                ));
+              } else {
+                await StorageService.setLoggedIn(true);
+                emit(state.copyWith(
+                  status: AuthStatus.authenticated,
+                  userProfile: profile,
+                  email: email,
+                ));
+              }
+            }
+            return;
+          }
+        } catch (_) {
+          emit(state.copyWith(
+            status: AuthStatus.failure,
+            errorMessage: 'This email is already registered. Please go to Sign In.',
+          ));
+          return;
+        }
+      }
+
+      // If user requires email confirmation
       if (user != null && user.emailConfirmedAt == null) {
         emit(state.copyWith(
           status: AuthStatus.needsEmailVerification,
