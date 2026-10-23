@@ -1,0 +1,55 @@
+name: safar_share
+description: "SafarShare - Car Pooling App for Pakistan"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^9.0.0
+  equatable: ^2.0.7
+  get_it: ^8.0.3
+  dartz: ^0.10.1
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+  flutter_svg: ^2.2.0
+  logger: ^2.5.0
+  font_awesome_flutter: ^10.9.1
+  # Persistence
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  intl_phone_field: ^3.2.0
+  supabase_flutter: ^2.8.1
+  firebase_core: ^3.10.1
+  firebase_auth: ^5.4.1
+  image_picker: ^1.1.2
+  mime: ^1.0.6
+  http: ^1.2.2
+  # Opening external apps from Help & Support (dialer, mail, WhatsApp,
+  # browser). Already resolved transitively via supabase_flutter; pinned
+  # here as a direct dependency so the import is stable and lint-clean.
+  url_launcher: ^6.3.2
+  # Native share sheet (WhatsApp / Facebook / SMS / ...) for "Share
+  # Invitation" on Refer & Earn.
+  share_plus: ^10.1.4
+  firebase_messaging: ^15.2.10
+  flutter_local_notifications: ^19.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/

@@ -1,0 +1,12 @@
+project_id = "safar-share"
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+# The bridge IS the auth entrypoint: it verifies a Firebase ID token and
+# mints a Supabase JWT. The Supabase gateway must NOT require a JWT to
+# call this function, otherwise unauthenticated clients can't reach it.
+[functions.firebase-bridge]
+verify_jwt = false

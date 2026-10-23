@@ -1,0 +1,15 @@
+{
+  "@@locale": "ur",
+  "appTitle": "سفر شیئر",
+  "welcomeMessage": "سفر شیئر میں خوش آمدید",
+  "searchRides": "سفر تلاش کریں",
+  "offerRide": "سفر کی پیشکش کریں",
+  "myRides": "میرے اسفار",
+  "profile": "پروفائل",
+  "settings": "ترتیبات",
+  "language": "زبان",
+  "theme": "تھیم",
+  "lightMode": "روشنی",
+  "darkMode": "اندھیرا",
+  "systemMode": "سسٹم موڈ"
+}

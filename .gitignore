@@ -1,0 +1,9 @@
+# Local verification scratch space (one-off Node/pg harnesses)
+.tmp_verify/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# FVM Version Cache
+.fvm/

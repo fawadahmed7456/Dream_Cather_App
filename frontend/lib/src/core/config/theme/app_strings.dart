@@ -1,0 +1,44 @@
+class AppStrings {
+  const AppStrings._();
+
+  static const String kAppTitle = 'SafarShare';
+  static const String kTagline = 'Share Ride \u2022 Beat Traffic';
+  static const String kGetStarted = 'Get Started';
+  static const String kGreeting = 'Assalam-o-Alaikum';
+  static const String kSearchHint = 'Where are you going today?';
+  static const String kFindARide = '     Find a Ride';
+  static const String kOfferARide = '     Offer a Ride';
+  static const String kSearchRides = 'Search Rides';
+  static const String kDepartureTime = 'Departure Time';
+  static const String kRideList = 'Available Rides';
+  static const String kRideDetails = 'Ride Details';
+  static const String kConfirmBooking = 'Confirm Booking';
+  static const String kFrom = 'From';
+  static const String kTo = 'To';
+  static const String kDateAndTime = 'Date & Time';
+  static const String kSeatsReserved = 'Seats Reserved';
+  static const String kTotalPrice = 'Total Price';
+  static const String kVerified = 'Verified';
+  static const String kPerSeat = 'seat';
+  static const String kRs = 'Rs';
+  static const String kHome = 'Home';
+  static const String kSearch = 'Search';
+  static const String kRides = 'Rides';
+  static const String kProfile = 'Profile';
+  static const String kAhmed = 'Ahmed';
+  static const String kTrips = 'Trips';
+  static const String kWallet = 'Wallet';
+  static const String kGoodMorning = 'Good Morning';
+  static const String kGoodAfternoon = 'Good Afternoon';
+  static const String kGoodEvening = 'Good Evening';
+  static const String kGoodNight = 'Good Night';
+  static const String kAhmedRaza = 'Ahmed Raza';
+  static const String kWhereAreYouGoing = 'Where are you going?';
+  static const String kHeroSubtitle = 'Find or offer a ride and save money';
+  static const String kTotalTrips = 'Total Trips';
+  static const String kSavedRs = 'Saved (Rs)';
+  static const String kCO2Saved = 'CO2 Saved';
+  static const String kRecentRides = 'Recent Rides';
+  static const String kCompleted = 'Completed';
+  static const String kCancelled = 'Cancelled';
+}

@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "appTitle": "SafarShare",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "welcomeMessage": "Welcome to SafarShare",
+  "searchRides": "Search Rides",
+  "offerRide": "Offer a Ride",
+  "myRides": "My Rides",
+  "profile": "Profile",
+  "settings": "Settings",
+  "language": "Language",
+  "theme": "Theme",
+  "lightMode": "Light Mode",
+  "darkMode": "Dark Mode",
+  "systemMode": "System Mode"
+}

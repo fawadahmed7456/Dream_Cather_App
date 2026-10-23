@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "4928979778",
+    "project_id": "safar-share-app-1777089546",
+    "storage_bucket": "safar-share-app-1777089546.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4928979778:android:526e0bd804898a38107edb",
+        "android_client_info": {
+          "package_name": "com.safarshare.safar_share"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXxQdUjqHSOuZnAO95rTMR1PQ1ajDpcgI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
