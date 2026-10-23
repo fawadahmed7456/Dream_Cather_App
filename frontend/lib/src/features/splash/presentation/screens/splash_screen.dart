@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/routes/routes_constants.dart';
+import '../../../../core/utils/permission_helper.dart';
 import '../../../../core/utils/storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -41,6 +42,10 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateNext() async {
+    if (!mounted) return;
+
+    // Request all permissions at once after splash
+    await PermissionHelper.requestAppPermissions();
     if (!mounted) return;
 
     final session = Supabase.instance.client.auth.currentSession;

@@ -1,10 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Network access for Firebase Auth, Supabase REST/Storage, and the
-         firebase-bridge edge function. Without this a release build can't
-         reach the network. -->
+    <!-- Network access -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Camera and Photo/Media permissions for avatar and posting -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
-        android:label="safar_share"
+        android:label="Dream Catcher"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
