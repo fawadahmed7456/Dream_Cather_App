@@ -32,6 +32,6 @@ void main() async {
     Log.e('Boot', '[3/3] Service locator FAILED: $e');
   }
 
-  runApp(const SafarShare());
+  runApp(const DreamCatcher());
   Log.i('Boot', 'runApp dispatched');
 }

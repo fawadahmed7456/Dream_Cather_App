@@ -1,8 +1,8 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'src.dart';
 
-class SafarShare extends StatelessWidget {
-  const SafarShare({super.key});
+class DreamCatcher extends StatelessWidget {
+  const DreamCatcher({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,9 @@ class SafarShare extends StatelessWidget {
                     title: 'Dream Catcher',
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
-                    themeMode: themeState == ThemeOption.light
-                        ? ThemeMode.light
-                        : ThemeMode.dark,
+                    themeMode: themeState == ThemeOption.dark
+                        ? ThemeMode.dark
+                        : ThemeMode.light,
                     locale: locale,
                     localizationsDelegates: const [
                       GlobalMaterialLocalizations.delegate,
@@ -54,4 +54,4 @@ class SafarShare extends StatelessWidget {
 }
 
 /// DreamCatcherApp alias
-typedef DreamCatcherApp = SafarShare;
+typedef DreamCatcherApp = DreamCatcher;

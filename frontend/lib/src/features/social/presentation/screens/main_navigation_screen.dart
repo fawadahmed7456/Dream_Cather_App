@@ -3,6 +3,7 @@ import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/config/theme/app_text_styles.dart';
 import '../../../../core/utils/size_utils.dart';
 import 'discover_communities_screen.dart';
+import 'profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -18,7 +19,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     DiscoverCommunitiesScreen(),
     _DummyTabScreen(title: 'Matches', icon: Icons.favorite_border),
     _DummyTabScreen(title: 'Chat', icon: Icons.chat_bubble_outline),
-    _DummyTabScreen(title: 'Profile', icon: Icons.person_outline),
+    ProfileScreen(),
   ];
 
   @override

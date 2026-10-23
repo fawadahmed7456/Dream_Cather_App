@@ -8,8 +8,11 @@ class ThemeCubit extends Cubit<ThemeOption> {
 
   static ThemeOption get _initialTheme {
     final isDark = StorageService.isDarkTheme;
-    if (isDark == null) return ThemeOption.light;
-    return isDark ? ThemeOption.dark : ThemeOption.light;
+    if (isDark == true) {
+      return ThemeOption.dark;
+    }
+    // Default to light theme
+    return ThemeOption.light;
   }
 
   void toggleTheme() {

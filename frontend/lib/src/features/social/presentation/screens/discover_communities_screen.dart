@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/config/theme/app_colors.dart';
@@ -161,44 +162,56 @@ class _DiscoverCommunitiesScreenState extends State<DiscoverCommunitiesScreen> {
                     return InkWell(
                       onTap: () => _openCommunity(item.name),
                       borderRadius: BorderRadius.circular(16.adaptSize),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.adaptSize),
-                          image: DecorationImage(
-                            image: NetworkImage(item.imageUrl),
-                            fit: BoxFit.cover,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.adaptSize),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: item.imageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: isDark ? AppColors.darkCard : const Color(0xFFE5E7EB),
+                                child: const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: isDark ? AppColors.darkCard : const Color(0xFFE5E7EB),
+                                child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.75),
+                                  ],
+                                  stops: const [0.45, 1.0],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 10.w,
+                              right: 10.w,
+                              bottom: 12.h,
+                              child: Text(
+                                item.name,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.text15Semibold(
+                                  context,
+                                  textColor: Colors.white,
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16.adaptSize),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.75),
-                              ],
-                              stops: const [0.45, 1.0],
-                            ),
-                          ),
-                          alignment: Alignment.bottomCenter,
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
-                          child: Text(
-                            item.name,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.text15Semibold(
-                              context,
-                              textColor: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
                     );
