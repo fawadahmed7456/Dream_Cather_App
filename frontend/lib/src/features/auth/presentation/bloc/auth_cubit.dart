@@ -1,105 +1,174 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../../../core/cubit/safe_cubit.dart';
-import '../../../../core/di/service_locator.dart';
-import '../../../../core/enum/app_state_status_enum.dart';
-import '../../../../core/services/supabase_auth_bridge.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/logger_utils.dart';
 import '../../../../core/utils/storage_service.dart';
-import '../../../profile/data/repositories/profile_repository.dart';
+import '../../data/models/user_profile.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'auth_state.dart';
 
-class AuthCubit extends SafeCubit<AuthState> {
+class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repository;
-  final SupabaseAuthBridge _bridge;
 
-  AuthCubit(this._repository, {SupabaseAuthBridge? bridge})
-      : _bridge = bridge ?? SupabaseAuthBridge.instance,
-        super(const AuthState());
+  AuthCubit(this._repository) : super(const AuthState());
 
-  void sendOtp(String phoneNumber, {String? fullName}) async {
-    emit(state.copyWith(
-        status: AppStateStatus.loading,
-        phoneNumber: phoneNumber,
-        fullName: fullName));
+  static const String _tag = 'AuthCubit';
 
-    final errorMessage = await _repository.sendOtp(phoneNumber);
-
-    if (errorMessage == null) {
-      emit(state.copyWith(
-          status: AppStateStatus.unauthenticated, countdownSeconds: 120));
-    } else {
-      emit(state.copyWith(
-          status: AppStateStatus.failure, message: errorMessage));
-    }
-  }
-
-  void verifyOtp(String otp) async {
-    if (state.phoneNumber == null) return;
-
-    emit(state.copyWith(status: AppStateStatus.loading));
-
-    final errorMessage = await _repository.verifyOtp(
-      phoneNumber: state.phoneNumber!,
-      otp: otp,
-    );
-
-    if (errorMessage != null) {
-      emit(state.copyWith(
-          status: AppStateStatus.failure, message: errorMessage));
+  /// Check existing session on app startup
+  Future<void> checkAuthStatus() async {
+    final authUser = _repository.currentAuthUser;
+    if (authUser == null) {
+      emit(state.copyWith(status: AuthStatus.unauthenticated));
       return;
     }
 
-    final firebaseUid = FirebaseAuth.instance.currentUser?.uid;
+    final isVerified = _repository.isEmailVerified;
+    if (!isVerified) {
+      emit(state.copyWith(
+        status: AuthStatus.needsEmailVerification,
+        email: authUser.email,
+      ));
+      return;
+    }
 
-    // Exchange the Firebase ID token for a Supabase session. If this fails
-    // we still mark sign-in successful so the user isn't locked out — they
-    // just won't be able to upload until the next retry. Storage/upload
-    // code paths should look at supabaseUserId to know if the bridge ran.
-    String? supabaseUserId;
-    String? bridgeError;
-    try {
-      supabaseUserId = await _bridge.signInAfterFirebase();
-      // Sync the user to our public.users table immediately so the app
-      // doesn't have to wait for the first profile load to know the user
-      // is "new" or "returning".
-      await sl<ProfileRepository>().ensureUserExists(
-        phoneNumber: state.phoneNumber!,
-        fullName: state.fullName,
-      );
-    } catch (e) {
-      bridgeError = 'Supabase session not ready: $e';
+    final profile = await _repository.fetchUserProfile(authUser.id);
+    if (profile == null || profile.username.isEmpty) {
+      emit(state.copyWith(
+        status: AuthStatus.needsOnboarding,
+        email: authUser.email,
+      ));
+      return;
     }
 
     await StorageService.setLoggedIn(true);
-
     emit(state.copyWith(
-      status: AppStateStatus.success,
-      firebaseUid: firebaseUid,
-      supabaseUserId: supabaseUserId,
-      message: bridgeError,
+      status: AuthStatus.authenticated,
+      userProfile: profile,
+      email: authUser.email,
     ));
   }
 
-  void restorePhone(String phoneNumber) {
-    emit(state.copyWith(
-      phoneNumber: phoneNumber,
-      status: AppStateStatus.unauthenticated,
-      countdownSeconds: 120,
-    ));
-  }
-
-  void resendOtp() async {
-    if (state.phoneNumber == null) return;
-
-    emit(state.copyWith(status: AppStateStatus.loading));
-    final errorMessage = await _repository.resendOtp(state.phoneNumber!);
-
-    if (errorMessage == null) {
+  /// Sign up with email & password
+  Future<void> signUp({
+    required String email,
+    required String password,
+  }) async {
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
+    try {
+      final res = await _repository.signUp(email: email, password: password);
+      final user = res.user;
+      
+      // If email confirmation is required by Supabase
+      if (user != null && user.emailConfirmedAt == null) {
+        emit(state.copyWith(
+          status: AuthStatus.needsEmailVerification,
+          email: email,
+        ));
+      } else {
+        // Direct onboarding
+        emit(state.copyWith(
+          status: AuthStatus.needsOnboarding,
+          email: email,
+        ));
+      }
+    } catch (e) {
+      Log.e(_tag, 'SignUp error: $e');
       emit(state.copyWith(
-          status: AppStateStatus.unauthenticated, countdownSeconds: 120));
-    } else {
-      emit(state.copyWith(
-          status: AppStateStatus.failure, message: errorMessage));
+        status: AuthStatus.failure,
+        errorMessage: e.toString(),
+      ));
     }
+  }
+
+  /// Sign in with email & password
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
+    try {
+      final res = await _repository.signIn(email: email, password: password);
+      final user = res.user;
+
+      if (user == null) {
+        emit(state.copyWith(
+          status: AuthStatus.failure,
+          errorMessage: 'Sign in failed. Please try again.',
+        ));
+        return;
+      }
+
+      if (user.emailConfirmedAt == null) {
+        emit(state.copyWith(
+          status: AuthStatus.needsEmailVerification,
+          email: email,
+        ));
+        return;
+      }
+
+      final profile = await _repository.fetchUserProfile(user.id);
+      if (profile == null || profile.username.isEmpty) {
+        emit(state.copyWith(
+          status: AuthStatus.needsOnboarding,
+          email: email,
+        ));
+        return;
+      }
+
+      await StorageService.setLoggedIn(true);
+      emit(state.copyWith(
+        status: AuthStatus.authenticated,
+        userProfile: profile,
+        email: email,
+      ));
+    } catch (e) {
+      Log.e(_tag, 'SignIn error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.failure,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  /// Resend confirmation email
+  Future<void> resendVerificationEmail(String email) async {
+    try {
+      await _repository.resendVerificationEmail(email);
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  /// Check username availability live
+  Future<bool> checkUsernameAvailable(String username) async {
+    final available = await _repository.isUsernameAvailable(username);
+    emit(state.copyWith(isUsernameAvailable: available));
+    return available;
+  }
+
+  /// Save profile during onboarding registration
+  Future<bool> completeOnboarding(UserProfile profile) async {
+    emit(state.copyWith(status: AuthStatus.loading));
+    try {
+      final saved = await _repository.saveUserProfile(profile);
+      await StorageService.setLoggedIn(true);
+      emit(state.copyWith(
+        status: AuthStatus.authenticated,
+        userProfile: saved,
+      ));
+      return true;
+    } catch (e) {
+      Log.e(_tag, 'completeOnboarding error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.failure,
+        errorMessage: e.toString(),
+      ));
+      return false;
+    }
+  }
+
+  /// Sign out
+  Future<void> signOut() async {
+    await _repository.signOut();
+    await StorageService.setLoggedIn(false);
+    emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:safar_share/l10n/app_localizations.dart';
 import 'src.dart';
 
 class SafarShare extends StatelessWidget {
@@ -11,7 +10,7 @@ class SafarShare extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => LocaleCubit()),
-        BlocProvider(create: (context) => sl<NotificationCubit>()..init()),
+        BlocProvider(create: (context) => AuthCubit(sl<AuthRepository>())),
       ],
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -19,26 +18,23 @@ class SafarShare extends StatelessWidget {
           builder: (context, locale) {
             return BlocBuilder<ThemeCubit, ThemeOption>(
               builder: (context, themeState) {
-                // Mount the responsive sizing system ABOVE MaterialApp so the
-                // `.w` / `.h` / `.fSize` / `.adaptSize` extensions resolve
-                // against the real device size everywhere — including the
-                // ThemeData built below — and re-resolve on rotation / resize.
                 return SizerUtils(
                   builder: (context, orientation) => MaterialApp(
-                    title: 'SafarShare',
+                    title: 'Dream Catcher',
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
                     themeMode: themeState == ThemeOption.light
                         ? ThemeMode.light
                         : ThemeMode.dark,
                     locale: locale,
-                    localizationsDelegates: [
-                      AppLocalizations.delegate,
+                    localizationsDelegates: const [
                       GlobalMaterialLocalizations.delegate,
                       GlobalWidgetsLocalizations.delegate,
                       GlobalCupertinoLocalizations.delegate,
                     ],
-                    supportedLocales: AppLocalizations.supportedLocales,
+                    supportedLocales: const [
+                      Locale('en', ''),
+                    ],
                     debugShowCheckedModeBanner: false,
                     initialRoute: Routes.kInitial,
                     onGenerateRoute: RoutesGenerator.onGenerateRoute,
@@ -56,3 +52,6 @@ class SafarShare extends StatelessWidget {
     );
   }
 }
+
+/// DreamCatcherApp alias
+typedef DreamCatcherApp = SafarShare;

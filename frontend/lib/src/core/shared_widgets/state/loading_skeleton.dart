@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safar_share/src/core/utils/size_utils.dart';
+import '../../utils/size_utils.dart';
 
 import '../../config/layout/sizes.dart';
 import '../../config/theme/app_colors.dart';

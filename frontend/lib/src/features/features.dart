@@ -1,14 +1,2 @@
 export 'splash/splash.dart';
-export 'home/home.dart';
 export 'auth/auth.dart';
-export 'onboarding/onboarding.dart';
-export 'bottom_nav_bar/bottom_nav_bar.dart';
-export 'search_ride/search_ride.dart';
-export 'my_bookings/my_bookings.dart';
-export 'my_rides/my_rides.dart';
-export 'ride_listing/ride_listing.dart';
-export 'ride_details/ride_details.dart';
-export 'wallet/wallet.dart';
-export 'profile/profile.dart';
-export 'notifications/notifications.dart';
-export 'reviews/reviews.dart';

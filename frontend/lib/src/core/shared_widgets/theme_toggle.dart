@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:safar_share/src/src.dart';
+import '../cubit/theme_cubit.dart';
+import '../extensions/context_extension.dart';
+import '../utils/size_utils.dart';
 
 class ThemeToggle extends StatelessWidget {
   const ThemeToggle({super.key});
@@ -20,7 +25,7 @@ class ThemeToggle extends StatelessWidget {
           border: Border.all(color: context.colorScheme.outlineVariant),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

@@ -1,50 +1,53 @@
-import '../../../../core/enum/app_state_status_enum.dart';
+import 'package:equatable/equatable.dart';
+import '../../data/models/user_profile.dart';
 
-class AuthState {
-  final AppStateStatus status;
-  final String? phoneNumber;
-  final String? fullName;
-  final int countdownSeconds;
-  final String? message;
+enum AuthStatus {
+  initial,
+  loading,
+  authenticated,
+  unauthenticated,
+  needsEmailVerification,
+  needsOnboarding,
+  failure,
+}
 
-  /// Firebase Auth UID (set after a successful OTP verification).
-  final String? firebaseUid;
-
-  /// public.users.id returned by the firebase-bridge function. This is the
-  /// value `auth.uid()` will return inside RLS evaluations after the
-  /// Supabase session is opened. Use this — NOT firebaseUid — as the
-  /// storage path prefix.
-  final String? supabaseUserId;
+class AuthState extends Equatable {
+  final AuthStatus status;
+  final UserProfile? userProfile;
+  final String? email;
+  final String? errorMessage;
+  final bool isUsernameAvailable;
 
   const AuthState({
-    this.status = AppStateStatus.initial,
-    this.phoneNumber,
-    this.fullName,
-    this.countdownSeconds = 0,
-    this.message,
-    this.firebaseUid,
-    this.supabaseUserId,
+    this.status = AuthStatus.initial,
+    this.userProfile,
+    this.email,
+    this.errorMessage,
+    this.isUsernameAvailable = true,
   });
 
-  bool get isLoading => status == AppStateStatus.loading;
-
   AuthState copyWith({
-    AppStateStatus? status,
-    String? phoneNumber,
-    String? fullName,
-    int? countdownSeconds,
-    String? message,
-    String? firebaseUid,
-    String? supabaseUserId,
+    AuthStatus? status,
+    UserProfile? userProfile,
+    String? email,
+    String? errorMessage,
+    bool? isUsernameAvailable,
   }) {
     return AuthState(
       status: status ?? this.status,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      fullName: fullName ?? this.fullName,
-      countdownSeconds: countdownSeconds ?? this.countdownSeconds,
-      message: message ?? this.message,
-      firebaseUid: firebaseUid ?? this.firebaseUid,
-      supabaseUserId: supabaseUserId ?? this.supabaseUserId,
+      userProfile: userProfile ?? this.userProfile,
+      email: email ?? this.email,
+      errorMessage: errorMessage,
+      isUsernameAvailable: isUsernameAvailable ?? this.isUsernameAvailable,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        status,
+        userProfile,
+        email,
+        errorMessage,
+        isUsernameAvailable,
+      ];
 }

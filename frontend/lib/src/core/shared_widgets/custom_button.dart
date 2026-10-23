@@ -1,4 +1,4 @@
-import 'package:safar_share/src/src.dart';
+import '../../src.dart';
 
 /// A [CustomButton] widget that can be used throughout the app.
 /// Supports solid colors and linear gradients.

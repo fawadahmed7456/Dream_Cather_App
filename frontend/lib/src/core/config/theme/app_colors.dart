@@ -128,11 +128,10 @@ class AppColor {
   static const Color semiGray = Color(0xB3FFFFFF);
 
   // ── Compatibility Aliases for AppColors (plural) ───────────────────────────
-  static const Color primary =
-      Color(0xFF0D7C66); // Keeping original primary for now
-  static const Color primaryDark = Color(0xFF0A6652);
-  static const Color primaryLight = Color(0xFFE0F5F0);
-  static const Color accent = Color(0xFFE8913A);
+  static const Color primary = Color(0xFF2394DF); // Dream Catcher Vibrant Blue
+  static const Color primaryDark = Color(0xFF1976D2);
+  static const Color primaryLight = Color(0xFFE3F2FD);
+  static const Color accent = Color(0xFF2BA0F5);
   static const Color danger = red;
   static const Color success = green;
   static const Color warning = yellow;
@@ -149,14 +148,14 @@ class AppColor {
   static const Color darkTextMuted = Color(0xFF5A7490);
   static const Color darkBorder = Color(0xFF1E3550);
 
-  static const Color lightBgMain = offWhite;
+  static const Color lightBgMain = white;
   static const Color lightBgCard = white;
-  static const Color lightBgInput = frostyGray;
+  static const Color lightBgInput = Color(0xFFF7F8FA);
   static const Color lightBgNav = white;
-  static const Color lightTextPrimary = nearBlack;
-  static const Color lightTextSecondary = mutedGray;
+  static const Color lightTextPrimary = Color(0xFF1C1C1E);
+  static const Color lightTextSecondary = Color(0xFF767676);
   static const Color lightTextMuted = silver;
-  static const Color lightBorder = lightGray;
+  static const Color lightBorder = Color(0xFFE5E7EB);
 
   static const Color scaffoldBackground = lightBgMain;
   static const Color textPrimary = lightTextPrimary;
@@ -166,47 +165,39 @@ class AppColor {
   static const Color starYellow = yellow;
   static const Color divider = lightBorder;
 
+  static const LinearGradient brandGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF26A0E5), Color(0xFF4AC2F7)],
+  );
+
   static const LinearGradient gradientMain = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF0D7C66), Color(0xFF0E8A72), Color(0xFF0F9E80)],
+    colors: [Color(0xFF2394DF), Color(0xFF2BA0F5), Color(0xFF4AC2F7)],
     stops: [0.0, 0.5, 1.0],
   );
 
   static const LinearGradient gradientAccent = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFE8913A), Color(0xFFF0A85C)],
+    colors: [Color(0xFF2BA0F5), Color(0xFF4AC2F7)],
   );
 
-  static const LinearGradient findRideGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF26B12D), Color(0xFF074409)],
-  );
-
-  static const LinearGradient offerRideGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF1E88E5), Color(0xFF0A304E)],
-  );
-
-  static const LinearGradient heroGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF0D7C66), Color(0xFF149E82)],
-  );
+  static const LinearGradient findRideGradient = gradientMain;
+  static const LinearGradient offerRideGradient = gradientMain;
+  static const LinearGradient heroGradient = gradientMain;
 
   static const LinearGradient splashGradientLight = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF2ECC71), Color(0xFF0D7C66), Color(0xFF1565C0)],
+    colors: [Color(0xFF26A0E5), Color(0xFF38B2F0), Color(0xFF52C6FA)],
   );
 
   static const LinearGradient splashGradientDark = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF0A1628), Color(0xFF0D3525), Color(0xFF0A1628)],
+    colors: [Color(0xFF0F2B48), Color(0xFF1A4670), Color(0xFF0F2B48)],
   );
 
   // Backward-compat for plural AppColors references

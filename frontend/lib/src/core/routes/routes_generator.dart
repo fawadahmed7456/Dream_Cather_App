@@ -12,54 +12,25 @@ class RoutesGenerator {
       case Routes.kInitial:
         page = const SplashScreen();
         break;
-      case Routes.kBottomNavBar:
-        // navKey must be attached for static BottomNavBar.changeTab(...)
-        // calls (e.g. "Find a Ride" → search tab) to resolve to a real
-        // State instance instead of silently no-op'ing.
-        page = BottomNavBar(key: BottomNavBar.navKey);
-        break;
-      case Routes.kSearchRide:
-        page = const SearchRideScreen();
-        break;
-      case Routes.kRideListing:
-        final args = settings.arguments;
-        page = RideListingScreen(
-          searchArgs: args is RideSearchArgs ? args : null,
-        );
-        break;
-      case Routes.kRideDetails:
-        final rideId = settings.arguments as String?;
-        page = RideDetailsScreen(rideId: rideId);
-        break;
-      case Routes.kEditProfile:
-        page = const EditProfileScreen();
-        break;
-      case Routes.kMyVehicles:
-        page = const MyVehiclesScreen();
-        break;
-      case Routes.kMyRides:
-        page = const MyRidesScreen();
-        break;
-      case Routes.kMyBookings:
-        page = const MyBookingsScreen();
-        break;
-      case Routes.kReferAndEarn:
-        page = const ReferEarnScreen();
-        break;
-      case Routes.kHelpAndSupport:
-        page = const HelpSupportScreen();
-        break;
-      case Routes.kSafetyVerification:
-        page = const SafetyVerificationScreen();
-        break;
-      case Routes.kNotifications:
-        page = const NotificationsScreen();
-        break;
-      case Routes.kOnboarding:
-        page = const OnboardingScreen();
+      case Routes.kGetStarted:
+        page = const GetStartedScreen();
         break;
       case Routes.kLogin:
         page = const LoginScreen();
+        break;
+      case Routes.kSignUp:
+        page = const SignUpScreen();
+        break;
+      case Routes.kHouseRules:
+        page = const HouseRulesScreen();
+        break;
+      case Routes.kEmailVerification:
+        page = EmailVerificationScreen(
+          email: settings.arguments as String? ?? '',
+        );
+        break;
+      case Routes.kOnboarding:
+        page = const OnboardingWizardScreen();
         break;
       case Routes.kVerifyOTP:
         final args = settings.arguments;
@@ -77,13 +48,10 @@ class RoutesGenerator {
         page = const CompleteProfileScreen();
         break;
       case Routes.kOfferRide:
-        page = const OfferRideScreen();
+        page = const Scaffold(body: Center(child: Text('Offer Ride')));
         break;
       case Routes.kEditRide:
-        final ride = settings.arguments;
-        page = ride is Map<String, dynamic>
-            ? EditRideScreen(ride: ride)
-            : const Scaffold(body: Center(child: Text('No ride selected.')));
+        page = const Scaffold(body: Center(child: Text('Edit Ride')));
         break;
       default:
         page = const Scaffold();

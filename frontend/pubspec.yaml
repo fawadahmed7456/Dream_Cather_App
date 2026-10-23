@@ -1,5 +1,5 @@
-name: safar_share
-description: "SafarShare - Car Pooling App for Pakistan"
+name: dream_catcher
+description: "Dream Catcher - Social Platform"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -25,22 +25,22 @@ dependencies:
   # Persistence
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  intl_phone_field: ^3.2.0
+  # Supabase (sole backend — no Firebase)
   supabase_flutter: ^2.8.1
-  firebase_core: ^3.10.1
-  firebase_auth: ^5.4.1
+  # Media picking for posts
   image_picker: ^1.1.2
   mime: ^1.0.6
   http: ^1.2.2
-  # Opening external apps from Help & Support (dialer, mail, WhatsApp,
-  # browser). Already resolved transitively via supabase_flutter; pinned
-  # here as a direct dependency so the import is stable and lint-clean.
+  # Opening external links
   url_launcher: ^6.3.2
-  # Native share sheet (WhatsApp / Facebook / SMS / ...) for "Share
-  # Invitation" on Refer & Earn.
+  # Share posts (count + native share sheet)
   share_plus: ^10.1.4
-  firebase_messaging: ^15.2.10
-  flutter_local_notifications: ^19.5.0
+  # Caching network images
+  cached_network_image: ^3.4.1
+  # Timestamps (e.g. "2 hours ago")
+  timeago: ^3.7.0
+  # UUID generation for post/comment IDs
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

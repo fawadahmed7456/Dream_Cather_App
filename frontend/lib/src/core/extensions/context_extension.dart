@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safar_share/l10n/app_localizations.dart';
 
 /// Extension on [BuildContext] to provide easy access to commonly used
 /// theme, media query, and screen size properties.
@@ -13,8 +12,8 @@ extension ContextExtension on BuildContext {
   /// - [colorScheme]: Retrieves the `ColorScheme` of the current theme, providing access to colors.
   ColorScheme get colorScheme => theme.colorScheme;
 
-  /// - [locale]: Retrieves the `AppLocalizations` instance for localization.
-  AppLocalizations get locale => AppLocalizations.of(this)!;
+  /// - [locale]: Retrieves the current [Locale].
+  Locale get locale => Localizations.localeOf(this);
 
   /// - [isDarkMode]: Quick check for dark mode status.
   bool get isDarkMode => theme.brightness == Brightness.dark;

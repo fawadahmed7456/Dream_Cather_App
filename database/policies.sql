@@ -1,120 +1,128 @@
--- SafarShare — Row Level Security policies
--- Project: yersmlrpbjpbzkiawjtr (Supabase)
---
--- IMPORTANT ASSUMPTION about identity
--- ---------------------------------------------------------------------------
--- These policies use auth.uid(), which returns the `sub` claim of the
--- caller's Supabase JWT. For the policies to evaluate to TRUE for a given
--- user, `public.users.id` MUST equal that user's Supabase Auth UUID (the
--- value of auth.uid()).
---
--- That means whichever flow creates a row in public.users — whether a
--- Supabase Auth signup trigger or an edge function that mints a Supabase
--- JWT after Firebase verification — MUST set public.users.id = auth.uid().
--- If the app continues to rely purely on a Firebase JWT (which Supabase will
--- treat as anon), every policy below will deny access and Realtime/REST
--- calls will return empty results.
---
--- Operations not covered by a policy are denied for both anon and
--- authenticated. The service_role key bypasses RLS entirely, which is how
--- edge functions are expected to insert into transactions.
--- ---------------------------------------------------------------------------
+-- Dream Catcher — Row Level Security (RLS) policies
+-- Project: twbsionwzwwuzldvfdar (Supabase)
+-- Source of Truth: Supabase Auth (auth.uid())
 
 begin;
 
--- RLS is already enabled by the init migration; re-assert defensively.
-alter table public.users        enable row level security;
-alter table public.vehicles     enable row level security;
-alter table public.rides        enable row level security;
-alter table public.bookings     enable row level security;
-alter table public.transactions enable row level security;
+-- Re-assert RLS defensively
+alter table public.users    enable row level security;
+alter table public.posts    enable row level security;
+alter table public.likes    enable row level security;
+alter table public.comments enable row level security;
+alter table public.shares   enable row level security;
 
 -- ---------------------------------------------------------------------------
--- users — a user can SELECT/UPDATE only their own row
+-- users
 -- ---------------------------------------------------------------------------
-drop policy if exists "users_self_select" on public.users;
-create policy "users_self_select"
+-- Anyone authenticated can view user profiles (needed for posts, comments, feeds)
+drop policy if exists "users_read_all" on public.users;
+create policy "users_read_all"
     on public.users for select
     to authenticated
-    using (id = auth.uid());
+    using (true);
 
-drop policy if exists "users_self_update" on public.users;
-create policy "users_self_update"
+-- User can create their profile row during onboarding / registration
+drop policy if exists "users_insert_self" on public.users;
+create policy "users_insert_self"
+    on public.users for insert
+    to authenticated
+    with check (id = auth.uid());
+
+-- User can only update their own profile
+drop policy if exists "users_update_self" on public.users;
+create policy "users_update_self"
     on public.users for update
     to authenticated
     using (id = auth.uid())
     with check (id = auth.uid());
 
 -- ---------------------------------------------------------------------------
--- vehicles — owner-only read/write
+-- posts
 -- ---------------------------------------------------------------------------
-drop policy if exists "vehicles_owner_all" on public.vehicles;
-create policy "vehicles_owner_all"
-    on public.vehicles for all
+-- All authenticated users can read posts
+drop policy if exists "posts_read_all" on public.posts;
+create policy "posts_read_all"
+    on public.posts for select
     to authenticated
-    using (owner_id = auth.uid())
-    with check (owner_id = auth.uid());
+    using (true);
 
--- ---------------------------------------------------------------------------
--- rides — public SELECT on active rides + driver sees their own;
---         driver-only INSERT/UPDATE/DELETE
--- ---------------------------------------------------------------------------
-drop policy if exists "rides_public_select" on public.rides;
-create policy "rides_public_select"
-    on public.rides for select
-    using (status = 'active' or driver_id = auth.uid());
-
-drop policy if exists "rides_driver_insert" on public.rides;
-create policy "rides_driver_insert"
-    on public.rides for insert
+-- User can create posts under their own user_id
+drop policy if exists "posts_insert_self" on public.posts;
+create policy "posts_insert_self"
+    on public.posts for insert
     to authenticated
-    with check (driver_id = auth.uid());
+    with check (user_id = auth.uid());
 
-drop policy if exists "rides_driver_update" on public.rides;
-create policy "rides_driver_update"
-    on public.rides for update
+-- User can update their own posts
+drop policy if exists "posts_update_self" on public.posts;
+create policy "posts_update_self"
+    on public.posts for update
     to authenticated
-    using (driver_id = auth.uid())
-    with check (driver_id = auth.uid());
+    using (user_id = auth.uid())
+    with check (user_id = auth.uid());
 
-drop policy if exists "rides_driver_delete" on public.rides;
-create policy "rides_driver_delete"
-    on public.rides for delete
-    to authenticated
-    using (driver_id = auth.uid());
-
--- ---------------------------------------------------------------------------
--- bookings — passenger sees own + driver sees bookings on their rides;
---            INSERT restricted to authenticated users acting as themselves
--- ---------------------------------------------------------------------------
-drop policy if exists "bookings_self_or_driver_select" on public.bookings;
-create policy "bookings_self_or_driver_select"
-    on public.bookings for select
-    to authenticated
-    using (
-        passenger_id = auth.uid()
-        or exists (
-            select 1
-            from public.rides r
-            where r.id = bookings.ride_id
-              and r.driver_id = auth.uid()
-        )
-    );
-
-drop policy if exists "bookings_passenger_insert" on public.bookings;
-create policy "bookings_passenger_insert"
-    on public.bookings for insert
-    to authenticated
-    with check (passenger_id = auth.uid());
-
--- ---------------------------------------------------------------------------
--- transactions — owner-only SELECT. No INSERT/UPDATE/DELETE policy, so all
--- writes must come from the service_role key (i.e. edge functions).
--- ---------------------------------------------------------------------------
-drop policy if exists "transactions_owner_select" on public.transactions;
-create policy "transactions_owner_select"
-    on public.transactions for select
+-- User can delete their own posts
+drop policy if exists "posts_delete_self" on public.posts;
+create policy "posts_delete_self"
+    on public.posts for delete
     to authenticated
     using (user_id = auth.uid());
+
+-- ---------------------------------------------------------------------------
+-- likes
+-- ---------------------------------------------------------------------------
+drop policy if exists "likes_read_all" on public.likes;
+create policy "likes_read_all"
+    on public.likes for select
+    to authenticated
+    using (true);
+
+drop policy if exists "likes_insert_self" on public.likes;
+create policy "likes_insert_self"
+    on public.likes for insert
+    to authenticated
+    with check (user_id = auth.uid());
+
+drop policy if exists "likes_delete_self" on public.likes;
+create policy "likes_delete_self"
+    on public.likes for delete
+    to authenticated
+    using (user_id = auth.uid());
+
+-- ---------------------------------------------------------------------------
+-- comments
+-- ---------------------------------------------------------------------------
+drop policy if exists "comments_read_all" on public.comments;
+create policy "comments_read_all"
+    on public.comments for select
+    to authenticated
+    using (true);
+
+drop policy if exists "comments_insert_self" on public.comments;
+create policy "comments_insert_self"
+    on public.comments for insert
+    to authenticated
+    with check (user_id = auth.uid());
+
+drop policy if exists "comments_delete_self" on public.comments;
+create policy "comments_delete_self"
+    on public.comments for delete
+    to authenticated
+    using (user_id = auth.uid());
+
+-- ---------------------------------------------------------------------------
+-- shares
+-- ---------------------------------------------------------------------------
+drop policy if exists "shares_read_all" on public.shares;
+create policy "shares_read_all"
+    on public.shares for select
+    to authenticated
+    using (true);
+
+drop policy if exists "shares_insert_self" on public.shares;
+create policy "shares_insert_self"
+    on public.shares for insert
+    to authenticated
+    with check (user_id = auth.uid());
 
 commit;
